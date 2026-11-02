@@ -1,0 +1,14 @@
+# Local-only material in the parent workspace.
+# Only the two project folders and 项目说明.md are published.
+/_backups/
+/code/
+/pw-tools/
+/report/
+/tomcat-downloads/
+/tomcat-verify/
+/开发文档/
+/*.docx
+
+# Common local system files
+Thumbs.db
+.DS_Store
