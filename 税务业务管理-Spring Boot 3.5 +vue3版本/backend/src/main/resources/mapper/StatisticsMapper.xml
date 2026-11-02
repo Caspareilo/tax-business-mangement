@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.tax.statistics.mapper.StatisticsMapper">
+
+    <sql id="scopeFilter">
+        AND d.deleted = 0
+        <if test="scopeUserId != null">
+            AND d.created_by = #{scopeUserId}
+        </if>
+        <if test="typeId != null">
+            AND d.declaration_type_id = #{typeId}
+        </if>
+        <if test="from != null">
+            AND d.submitted_at &gt;= #{from}
+        </if>
+        <if test="to != null">
+            AND d.submitted_at &lt;= #{to}
+        </if>
+    </sql>
+
+    <select id="selectOverview" resultType="com.example.tax.statistics.vo.OverviewStat">
+        SELECT
+            COUNT(*) AS total,
+            COALESCE(SUM(d.status = 'DRAFT'), 0) AS draft,
+            COALESCE(SUM(d.status = 'PENDING_REVIEW'), 0) AS pending,
+            COALESCE(SUM(d.status = 'APPROVED'), 0) AS approved,
+            COALESCE(SUM(d.status = 'RETURNED'), 0) AS returned,
+            COALESCE(SUM(d.status = 'WITHDRAWN'), 0) AS withdrawn,
+            COALESCE(SUM(d.declared_amount), 0) AS total_amount
+        FROM tax_declaration d
+        WHERE 1 = 1
+        <include refid="scopeFilter"/>
+    </select>
+
+    <select id="selectTrend" resultType="com.example.tax.statistics.vo.TrendStat">
+        SELECT DATE_FORMAT(d.submitted_at, '%Y-%m') AS month,
+               COUNT(*) AS count,
+               COALESCE(SUM(d.declared_amount), 0) AS amount
+        FROM tax_declaration d
+        WHERE d.deleted = 0
+          AND d.submitted_at IS NOT NULL
+          AND d.submitted_at &gt;= #{start}
+          AND d.submitted_at &lt;= #{end}
+        <if test="scopeUserId != null">
+            AND d.created_by = #{scopeUserId}
+        </if>
+        <if test="typeId != null">
+            AND d.declaration_type_id = #{typeId}
+        </if>
+        GROUP BY DATE_FORMAT(d.submitted_at, '%Y-%m')
+        ORDER BY month
+    </select>
+
+    <select id="selectByStatus" resultType="com.example.tax.statistics.vo.StatusStat">
+        SELECT d.status AS status, COUNT(*) AS count
+        FROM tax_declaration d
+        WHERE 1 = 1
+        <include refid="scopeFilter"/>
+        GROUP BY d.status
+        ORDER BY count DESC
+    </select>
+
+    <select id="selectByType" resultType="com.example.tax.statistics.vo.TypeStat">
+        SELECT d.declaration_type_snapshot AS type_name, COUNT(*) AS count,
+               COALESCE(SUM(d.declared_amount), 0) AS amount
+        FROM tax_declaration d
+        WHERE 1 = 1
+        <include refid="scopeFilter"/>
+        GROUP BY d.declaration_type_snapshot
+        ORDER BY count DESC
+    </select>
+
+    <select id="selectByTaxpayerType" resultType="com.example.tax.statistics.vo.TaxpayerTypeStat">
+        SELECT t.taxpayer_type AS taxpayer_type, COUNT(*) AS count,
+               COALESCE(SUM(d.declared_amount), 0) AS amount
+        FROM tax_declaration d
+        JOIN taxpayer t ON t.id = d.taxpayer_id
+        WHERE 1 = 1
+        <include refid="scopeFilter"/>
+        GROUP BY t.taxpayer_type
+        ORDER BY count DESC
+    </select>
+</mapper>

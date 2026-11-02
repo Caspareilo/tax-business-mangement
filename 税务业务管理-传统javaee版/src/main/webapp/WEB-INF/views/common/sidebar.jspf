@@ -1,0 +1,148 @@
+<%@ page pageEncoding="UTF-8" %>
+<aside class="app-sidebar" id="appSidebar" aria-label="主导航">
+    <div class="app-brand">
+        <span class="app-brand-mark" aria-hidden="true">税</span>
+        <span class="app-brand-text">
+            <span class="app-brand-title">税务业务管理</span>
+            <span class="app-brand-subtitle">教学演示系统 V1.0</span>
+        </span>
+    </div>
+
+    <nav class="app-nav">
+        <div class="app-nav-group">
+            <button class="app-nav-group-label" type="button" aria-expanded="true"
+                    aria-controls="navOverview" data-nav-group>
+                总览
+            </button>
+            <div class="app-nav-items" id="navOverview">
+                <a class="app-nav-link ${activeMenu == 'dashboard' ? 'active' : ''}"
+                   aria-current="${activeMenu == 'dashboard' ? 'page' : 'false'}"
+                   href="${ctx}/dashboard.action">
+                    <span class="app-nav-icon" aria-hidden="true">▦</span><span>分析页</span>
+                </a>
+            </div>
+        </div>
+
+        <c:set var="businessOpen" value="true"/>
+        <div class="app-nav-group">
+            <button class="app-nav-group-label" type="button"
+                    aria-expanded="${businessOpen}" aria-controls="navBusiness" data-nav-group>
+                业务办理
+            </button>
+            <div class="app-nav-items" id="navBusiness" ${businessOpen ? '' : 'hidden'}>
+                <c:if test="${currentUser.hasPermission('declaration:view')}">
+                    <a class="app-nav-link ${activeMenu == 'declarations' ? 'active' : ''}"
+                       aria-current="${activeMenu == 'declarations' ? 'page' : 'false'}"
+                       href="${ctx}/declarations.action">
+                        <span class="app-nav-icon" aria-hidden="true">▤</span><span>我的申报</span>
+                    </a>
+                </c:if>
+                <c:if test="${currentUser.hasPermission('declaration:create')}">
+                    <a class="app-nav-link ${activeMenu == 'declaration-create' ? 'active' : ''}"
+                       aria-current="${activeMenu == 'declaration-create' ? 'page' : 'false'}"
+                       href="${ctx}/declarations/create.action">
+                        <span class="app-nav-icon" aria-hidden="true">＋</span><span>新建申报</span>
+                    </a>
+                </c:if>
+                <c:if test="${currentUser.hasPermission('review:manage')}">
+                    <a class="app-nav-link ${activeMenu == 'reviews' ? 'active' : ''}"
+                       aria-current="${activeMenu == 'reviews' ? 'page' : 'false'}"
+                       href="${ctx}/reviews/pending.action">
+                        <span class="app-nav-icon" aria-hidden="true">✓</span><span>待审核申报</span>
+                    </a>
+                </c:if>
+                <c:if test="${currentUser.hasPermission('declaration:view')}">
+                    <a class="app-nav-link ${activeMenu == 'search' ? 'active' : ''}"
+                       aria-current="${activeMenu == 'search' ? 'page' : 'false'}"
+                       href="${ctx}/search/declarations.action">
+                        <span class="app-nav-icon" aria-hidden="true">⌕</span><span>综合查询</span>
+                    </a>
+                </c:if>
+                <c:if test="${currentUser.hasPermission('statistics:view')}">
+                    <a class="app-nav-link ${activeMenu == 'statistics' ? 'active' : ''}"
+                       aria-current="${activeMenu == 'statistics' ? 'page' : 'false'}"
+                       href="${ctx}/statistics/overview.action">
+                        <span class="app-nav-icon" aria-hidden="true">▥</span><span>统计分析</span>
+                    </a>
+                </c:if>
+            </div>
+        </div>
+
+        <c:set var="baseOpen" value="true"/>
+        <c:if test="${currentUser.hasPermission('taxpayer:view') || currentUser.hasPermission('type:manage') || currentUser.hasPermission('template:manage')}">
+            <div class="app-nav-group">
+                <button class="app-nav-group-label" type="button"
+                        aria-expanded="${baseOpen}" aria-controls="navBase" data-nav-group>
+                    基础数据
+                </button>
+                <div class="app-nav-items" id="navBase" ${baseOpen ? '' : 'hidden'}>
+                    <c:if test="${currentUser.hasPermission('taxpayer:view')}">
+                        <a class="app-nav-link ${activeMenu == 'taxpayers' ? 'active' : ''}"
+                           aria-current="${activeMenu == 'taxpayers' ? 'page' : 'false'}"
+                           href="${ctx}/taxpayers.action">
+                            <span class="app-nav-icon" aria-hidden="true">◫</span><span>纳税人管理</span>
+                        </a>
+                    </c:if>
+                    <c:if test="${currentUser.hasPermission('type:manage')}">
+                        <a class="app-nav-link ${activeMenu == 'types' ? 'active' : ''}"
+                           aria-current="${activeMenu == 'types' ? 'page' : 'false'}"
+                           href="${ctx}/declaration-types.action">
+                            <span class="app-nav-icon" aria-hidden="true">≡</span><span>申报类型</span>
+                        </a>
+                    </c:if>
+                    <c:if test="${currentUser.hasPermission('template:manage')}">
+                        <a class="app-nav-link ${activeMenu == 'templates' ? 'active' : ''}"
+                           aria-current="${activeMenu == 'templates' ? 'page' : 'false'}"
+                           href="${ctx}/form-templates.action">
+                            <span class="app-nav-icon" aria-hidden="true">▣</span><span>表单模板</span>
+                        </a>
+                    </c:if>
+                </div>
+            </div>
+        </c:if>
+
+        <c:set var="systemOpen" value="true"/>
+        <c:if test="${currentUser.hasPermission('user:manage') || currentUser.hasPermission('role:manage') || currentUser.hasPermission('audit:view') || currentUser.hasPermission('dict:manage')}">
+            <div class="app-nav-group">
+                <button class="app-nav-group-label" type="button"
+                        aria-expanded="${systemOpen}" aria-controls="navSystem" data-nav-group>
+                    系统管理
+                </button>
+                <div class="app-nav-items" id="navSystem" ${systemOpen ? '' : 'hidden'}>
+                    <c:if test="${currentUser.hasPermission('user:manage')}">
+                        <a class="app-nav-link ${activeMenu == 'users' ? 'active' : ''}"
+                           aria-current="${activeMenu == 'users' ? 'page' : 'false'}"
+                           href="${ctx}/admin/users.action">
+                            <span class="app-nav-icon" aria-hidden="true">◉</span><span>用户管理</span>
+                        </a>
+                    </c:if>
+                    <c:if test="${currentUser.hasPermission('role:manage')}">
+                        <a class="app-nav-link ${activeMenu == 'roles' ? 'active' : ''}"
+                           aria-current="${activeMenu == 'roles' ? 'page' : 'false'}"
+                           href="${ctx}/admin/roles.action">
+                            <span class="app-nav-icon" aria-hidden="true">⊙</span><span>角色与权限</span>
+                        </a>
+                    </c:if>
+                    <c:if test="${currentUser.hasPermission('audit:view')}">
+                        <a class="app-nav-link ${activeMenu == 'audit' ? 'active' : ''}"
+                           aria-current="${activeMenu == 'audit' ? 'page' : 'false'}"
+                           href="${ctx}/admin/audit-logs.action">
+                            <span class="app-nav-icon" aria-hidden="true">◷</span><span>操作日志</span>
+                        </a>
+                    </c:if>
+                    <c:if test="${currentUser.hasPermission('dict:manage')}">
+                        <a class="app-nav-link ${activeMenu == 'dictionaries' ? 'active' : ''}"
+                           aria-current="${activeMenu == 'dictionaries' ? 'page' : 'false'}"
+                           href="${ctx}/admin/dictionaries.action">
+                            <span class="app-nav-icon" aria-hidden="true">≣</span><span>数据字典</span>
+                        </a>
+                    </c:if>
+                </div>
+            </div>
+        </c:if>
+    </nav>
+
+    <div class="app-sidebar-footer">
+        仅用于课程教学，全部数据为虚构演示数据。
+    </div>
+</aside>

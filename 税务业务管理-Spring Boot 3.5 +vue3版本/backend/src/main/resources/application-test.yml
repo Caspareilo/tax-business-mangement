@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    url: ${TEST_DB_URL:jdbc:mysql://localhost:3306/tax_business_test?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false}
+    username: ${TEST_DB_USERNAME:tax_app}
+    password: ${TEST_DB_PASSWORD:}
+  flyway:
+    clean-disabled: false

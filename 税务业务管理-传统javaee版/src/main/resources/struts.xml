@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 6.0//EN"
+        "https://struts.apache.org/dtds/struts-6.0.dtd">
+<struts>
+    <constant name="struts.devMode" value="false"/>
+    <constant name="struts.i18n.encoding" value="UTF-8"/>
+    <constant name="struts.action.extension" value="action,"/>
+    <constant name="struts.enable.DynamicMethodInvocation" value="false"/>
+    <constant name="struts.ognl.allowStaticMethodAccess" value="false"/>
+
+    <!-- Common result inherited by all namespaces. Action methods assign only a
+         server-controlled path below WEB-INF/views to resultView. -->
+    <package name="tax-base" extends="struts-default" abstract="true">
+        <interceptors>
+            <interceptor-stack name="taxDefaultStack">
+                <interceptor-ref name="defaultStack">
+                    <!-- operation is fixed by struts.xml and must never be client-overridable. -->
+                    <param name="params.excludeParams">operation</param>
+                </interceptor-ref>
+            </interceptor-stack>
+        </interceptors>
+        <default-interceptor-ref name="taxDefaultStack"/>
+
+        <global-results>
+            <result name="success" type="dispatcher">
+                <param name="location">/WEB-INF/views/${resultView}</param>
+                <param name="parse">true</param>
+            </result>
+        </global-results>
+    </package>
+
+    <package name="tax-root" extends="tax-base" namespace="/">
+        <action name="dashboard"
+                class="com.example.tax.action.DashboardAction"/>
+        <action name="declarations"
+                class="com.example.tax.action.DeclarationAction"/>
+        <action name="taxpayers"
+                class="com.example.tax.action.TaxpayerAction"/>
+        <action name="declaration-types"
+                class="com.example.tax.action.DeclarationTypeAction"/>
+        <action name="form-templates"
+                class="com.example.tax.action.FormTemplateAction"/>
+        <action name="profile"
+                class="com.example.tax.action.ProfileAction"/>
+    </package>
+
+    <package name="tax-auth" extends="tax-base" namespace="/auth">
+        <action name="login"
+                class="com.example.tax.action.LoginAction"/>
+        <action name="logout"
+                class="com.example.tax.action.LogoutAction"/>
+    </package>
+
+    <package name="tax-statistics" extends="tax-base" namespace="/statistics">
+        <action name="overview"
+                class="com.example.tax.action.StatisticsAction"/>
+    </package>
+
+    <package name="tax-search" extends="tax-base" namespace="/search">
+        <action name="declarations"
+                class="com.example.tax.action.SearchAction"/>
+        <action name="export"
+                class="com.example.tax.action.SearchAction">
+            <param name="operation">export</param>
+        </action>
+    </package>
+
+    <package name="tax-declarations" extends="tax-base" namespace="/declarations">
+        <action name="create"
+                class="com.example.tax.action.DeclarationAction">
+            <param name="operation">create</param>
+        </action>
+        <action name="edit"
+                class="com.example.tax.action.DeclarationAction">
+            <param name="operation">edit</param>
+        </action>
+        <action name="detail"
+                class="com.example.tax.action.DeclarationAction">
+            <param name="operation">detail</param>
+        </action>
+        <action name="save"
+                class="com.example.tax.action.DeclarationAction">
+            <param name="operation">save</param>
+        </action>
+        <action name="submit"
+                class="com.example.tax.action.DeclarationAction">
+            <param name="operation">submit</param>
+        </action>
+        <action name="withdraw"
+                class="com.example.tax.action.DeclarationAction">
+            <param name="operation">withdraw</param>
+        </action>
+    </package>
+
+    <package name="tax-reviews" extends="tax-base" namespace="/reviews">
+        <action name="pending"
+                class="com.example.tax.action.ReviewAction">
+            <param name="operation">pending</param>
+        </action>
+        <action name="detail"
+                class="com.example.tax.action.ReviewAction">
+            <param name="operation">detail</param>
+        </action>
+        <action name="approve"
+                class="com.example.tax.action.ReviewAction">
+            <param name="operation">approve</param>
+        </action>
+        <action name="return"
+                class="com.example.tax.action.ReviewAction">
+            <param name="operation">return</param>
+        </action>
+    </package>
+
+    <package name="tax-taxpayers" extends="tax-base" namespace="/taxpayers">
+        <action name="create"
+                class="com.example.tax.action.TaxpayerAction">
+            <param name="operation">create</param>
+        </action>
+        <action name="edit"
+                class="com.example.tax.action.TaxpayerAction">
+            <param name="operation">edit</param>
+        </action>
+        <action name="detail"
+                class="com.example.tax.action.TaxpayerAction">
+            <param name="operation">detail</param>
+        </action>
+        <action name="save"
+                class="com.example.tax.action.TaxpayerAction">
+            <param name="operation">save</param>
+        </action>
+        <action name="status"
+                class="com.example.tax.action.TaxpayerAction">
+            <param name="operation">status</param>
+        </action>
+    </package>
+
+    <package name="tax-declaration-types" extends="tax-base"
+             namespace="/declaration-types">
+        <action name="edit"
+                class="com.example.tax.action.DeclarationTypeAction">
+            <param name="operation">edit</param>
+        </action>
+        <action name="save"
+                class="com.example.tax.action.DeclarationTypeAction">
+            <param name="operation">save</param>
+        </action>
+        <action name="status"
+                class="com.example.tax.action.DeclarationTypeAction">
+            <param name="operation">status</param>
+        </action>
+    </package>
+
+    <package name="tax-form-templates" extends="tax-base"
+             namespace="/form-templates">
+        <action name="edit"
+                class="com.example.tax.action.FormTemplateAction">
+            <param name="operation">edit</param>
+        </action>
+        <action name="preview"
+                class="com.example.tax.action.FormTemplateAction">
+            <param name="operation">preview</param>
+        </action>
+        <action name="versions"
+                class="com.example.tax.action.FormTemplateAction">
+            <param name="operation">versions</param>
+        </action>
+        <action name="save"
+                class="com.example.tax.action.FormTemplateAction">
+            <param name="operation">save</param>
+        </action>
+        <action name="publish"
+                class="com.example.tax.action.FormTemplateAction">
+            <param name="operation">publish</param>
+        </action>
+        <action name="disable"
+                class="com.example.tax.action.FormTemplateAction">
+            <param name="operation">disable</param>
+        </action>
+        <action name="new-version"
+                class="com.example.tax.action.FormTemplateAction">
+            <param name="operation">new-version</param>
+        </action>
+    </package>
+
+    <package name="tax-admin" extends="tax-base" namespace="/admin">
+        <action name="users"
+                class="com.example.tax.action.UserAction"/>
+        <action name="roles"
+                class="com.example.tax.action.RoleAction"/>
+        <action name="dictionaries"
+                class="com.example.tax.action.DictionaryAction"/>
+        <action name="audit-logs"
+                class="com.example.tax.action.AuditLogAction"/>
+    </package>
+
+    <package name="tax-admin-users" extends="tax-base" namespace="/admin/users">
+        <action name="edit"
+                class="com.example.tax.action.UserAction">
+            <param name="operation">edit</param>
+        </action>
+        <action name="save"
+                class="com.example.tax.action.UserAction">
+            <param name="operation">save</param>
+        </action>
+        <action name="status"
+                class="com.example.tax.action.UserAction">
+            <param name="operation">status</param>
+        </action>
+        <action name="reset-password"
+                class="com.example.tax.action.UserAction">
+            <param name="operation">reset-password</param>
+        </action>
+    </package>
+
+    <package name="tax-admin-roles" extends="tax-base" namespace="/admin/roles">
+        <action name="edit"
+                class="com.example.tax.action.RoleAction">
+            <param name="operation">edit</param>
+        </action>
+        <action name="save"
+                class="com.example.tax.action.RoleAction">
+            <param name="operation">save</param>
+        </action>
+        <action name="status"
+                class="com.example.tax.action.RoleAction">
+            <param name="operation">status</param>
+        </action>
+    </package>
+
+    <package name="tax-admin-dictionaries" extends="tax-base"
+             namespace="/admin/dictionaries">
+        <action name="save"
+                class="com.example.tax.action.DictionaryAction">
+            <param name="operation">save</param>
+        </action>
+        <action name="status"
+                class="com.example.tax.action.DictionaryAction">
+            <param name="operation">status</param>
+        </action>
+    </package>
+
+    <package name="tax-profile" extends="tax-base" namespace="/profile">
+        <action name="password"
+                class="com.example.tax.action.ProfileAction">
+            <param name="operation">password</param>
+        </action>
+    </package>
+</struts>

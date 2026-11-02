@@ -1,0 +1,17 @@
+<%@ page pageEncoding="UTF-8" %>
+        </main>
+        <footer class="app-footer">
+            税务业务管理系统 · 传统 Java EE 课程设计（Servlet / JSP / JDBC / MySQL） · 数据均为虚构，不连接真实税务系统
+        </footer>
+    </div>
+</div>
+<script src="${ctx}/assets/vendor/bootstrap.bundle.min.js"></script>
+<script src="${ctx}/assets/js/app.js"></script>
+<c:if test="${extraScript == 'charts.js'}">
+    <script src="${ctx}/assets/vendor/chart.umd.min.js"></script>
+</c:if>
+<c:if test="${not empty extraScript}">
+    <script src="${ctx}/assets/js/${extraScript}"></script>
+</c:if>
+</body>
+</html>

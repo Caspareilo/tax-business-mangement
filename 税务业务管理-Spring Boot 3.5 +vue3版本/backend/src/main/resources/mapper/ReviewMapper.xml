@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.tax.review.mapper.ReviewMapper">
+
+    <select id="selectHistoryPage" resultType="com.example.tax.review.vo.ReviewHistoryVO">
+        SELECT
+            r.id,
+            r.declaration_id,
+            d.declaration_no,
+            d.taxpayer_name_snapshot AS taxpayer_name,
+            d.declaration_type_snapshot AS declaration_type_name,
+            r.review_action AS action,
+            r.review_comment AS comment,
+            r.reviewer_id,
+            u.display_name AS reviewer_name,
+            r.from_status,
+            r.to_status,
+            r.reviewed_at
+        FROM declaration_review r
+        JOIN tax_declaration d ON d.id = r.declaration_id
+        JOIN sys_user u ON u.id = r.reviewer_id
+        <where>
+            <if test="reviewerId != null">
+                AND r.reviewer_id = #{reviewerId}
+            </if>
+            <if test="action != null and action != ''">
+                AND r.review_action = #{action}
+            </if>
+            <if test="from != null">
+                AND r.reviewed_at &gt;= #{from}
+            </if>
+            <if test="to != null">
+                AND r.reviewed_at &lt;= #{to}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (d.declaration_no LIKE CONCAT('%', #{keyword}, '%')
+                     OR d.taxpayer_name_snapshot LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+        ORDER BY r.reviewed_at DESC, r.id DESC
+    </select>
+</mapper>

@@ -1,0 +1,31 @@
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
+<%-- 固定格式化区域，避免客户端未发送 Accept-Language 时 fmt:formatNumber 原样输出 --%>
+<fmt:setLocale value="zh_CN"/>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><c:out value="${empty pageTitle ? '税务业务管理系统' : pageTitle}"/> - 税务业务管理系统</title>
+    <link rel="icon" href="${ctx}/assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="${ctx}/assets/vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="${ctx}/assets/css/app.css">
+    <link rel="stylesheet" href="${ctx}/assets/css/views.css">
+</head>
+<body>
+<div class="app-shell">
+    <%@ include file="sidebar.jspf" %>
+    <button class="sidebar-backdrop" id="sidebarBackdrop" type="button" aria-label="关闭导航"></button>
+    <div class="app-main">
+        <%@ include file="topbar.jspf" %>
+        <main class="app-content">
+            <nav class="app-breadcrumb" aria-label="面包屑">
+                <a href="${ctx}/dashboard.action">工作台</a>
+                <span class="app-breadcrumb-separator" aria-hidden="true">/</span>
+                <span><c:out value="${empty pageTitle ? '税务业务管理' : pageTitle}"/></span>
+            </nav>
+            <%@ include file="messages.jspf" %>

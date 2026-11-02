@@ -1,0 +1,10 @@
+target
+.idea
+*.iml
+*.log
+*.tmp
+.env
+docs
+开发文档
+database
+.git

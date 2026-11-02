@@ -1,0 +1,17 @@
+target/
+.idea/
+*.iml
+*.log
+*.tmp
+
+# Never commit real database credentials
+src/main/resources/db.properties
+src/test/resources/db.properties
+
+# Local server / IDE output
+apache-tomcat-*/
+tomcat*/
+*.war
+
+# Docker Compose local overrides
+.env

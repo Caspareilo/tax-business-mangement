@@ -1,0 +1,10 @@
+# Copy this file to src/main/resources/db.properties for local development.
+# NEVER commit db.properties with real credentials.
+# Alternatively pass -Dtax.db.url / -Dtax.db.username / -Dtax.db.password to Tomcat.
+
+db.url=jdbc:mysql://localhost:3306/tax_demo?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+db.username=tax_app
+db.password=change-me
+db.driver=com.mysql.cj.jdbc.Driver
+db.pool.maximum=10
+db.pool.minimum=2

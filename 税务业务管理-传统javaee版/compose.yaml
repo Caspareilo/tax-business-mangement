@@ -1,0 +1,57 @@
+name: tax-business-jee
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: tax-jee-mysql
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-tax_demo}
+      MYSQL_USER: ${MYSQL_USER:-tax_app}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-TaxDemo_2026}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-TaxRoot_2026}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+    volumes:
+      - tax_jee_mysql_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./database/seed-demo.sql:/docker-entrypoint-initdb.d/02-seed-demo.sql:ro
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - mysqladmin ping -h 127.0.0.1 -uroot -p$${MYSQL_ROOT_PASSWORD} --silent
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+    networks:
+      - tax_jee_network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tax-jee-app
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      TAX_DB_URL: "jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-tax_demo}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true"
+      TAX_DB_USERNAME: ${MYSQL_USER:-tax_app}
+      TAX_DB_PASSWORD: ${MYSQL_PASSWORD:-TaxDemo_2026}
+    ports:
+      - "${APP_PORT:-18082}:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - tax_jee_network
+
+volumes:
+  tax_jee_mysql_data:
+    name: tax-business-jee-mysql-data
+
+networks:
+  tax_jee_network:
+    name: tax-business-jee-network

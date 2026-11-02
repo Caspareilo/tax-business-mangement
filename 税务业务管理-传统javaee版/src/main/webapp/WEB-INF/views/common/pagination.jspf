@@ -1,0 +1,30 @@
+<%@ page pageEncoding="UTF-8" %>
+<c:if test="${not empty pageData}">
+    <div class="pagination-bar">
+        <div>
+            共 <strong>${pageData.total}</strong> 条记录，
+            当前第 ${pageData.fromRow}-${pageData.toRow} 条
+        </div>
+        <c:if test="${pageData.totalPages > 1}">
+            <div class="d-flex align-items-center gap-2">
+                <nav aria-label="分页">
+                    <ul class="pagination pagination-sm">
+                        <li class="page-item ${pageData.page <= 1 ? 'disabled' : ''}">
+                            <a class="page-link" href="${ctx}${paginationBase}?page=${pageData.previousPage}&size=${pageData.size}&${filterQuery}">上一页</a>
+                        </li>
+                        <c:set var="startPage" value="${pageData.page - 2 < 1 ? 1 : pageData.page - 2}"/>
+                        <c:set var="endPage" value="${pageData.page + 2 > pageData.totalPages ? pageData.totalPages : pageData.page + 2}"/>
+                        <c:forEach var="pageNo" begin="${startPage}" end="${endPage}">
+                            <li class="page-item ${pageNo == pageData.page ? 'active' : ''}">
+                                <a class="page-link" href="${ctx}${paginationBase}?page=${pageNo}&size=${pageData.size}&${filterQuery}">${pageNo}</a>
+                            </li>
+                        </c:forEach>
+                        <li class="page-item ${pageData.page >= pageData.totalPages ? 'disabled' : ''}">
+                            <a class="page-link" href="${ctx}${paginationBase}?page=${pageData.nextPage}&size=${pageData.size}&${filterQuery}">下一页</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </c:if>
+    </div>
+</c:if>

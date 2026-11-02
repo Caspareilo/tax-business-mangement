@@ -1,0 +1,19 @@
+<%@ page pageEncoding="UTF-8" %>
+<header class="app-topbar">
+    <div class="app-topbar-left">
+        <button class="app-sidebar-toggle" id="sidebarToggle" type="button"
+                aria-label="展开或收起导航" aria-controls="appSidebar" aria-expanded="false">☰</button>
+        <span class="app-topbar-title"><span class="app-workspace-label">税务业务管理</span> / <c:out value="${empty pageTitle ? '工作台' : pageTitle}"/></span>
+    </div>
+    <div class="app-topbar-right">
+        <span class="app-role-label">当前角色：<span class="app-user-name"><c:out value="${currentUser.roleLabel}"/></span></span>
+        <a class="app-user-link" href="${ctx}/profile.action" aria-label="打开个人资料">
+            <span class="app-user-avatar" aria-hidden="true">税</span>
+            <span class="app-user-name"><c:out value="${currentUser.displayName}"/></span>
+        </a>
+        <form class="inline-form" method="post" action="${ctx}/auth/logout.action">
+            <input type="hidden" name="csrfToken" value="${csrfToken}">
+            <button type="submit" class="btn btn-outline-secondary btn-sm">退出</button>
+        </form>
+    </div>
+</header>
