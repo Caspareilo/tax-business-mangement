@@ -1,4 +1,4 @@
-> **部署流程见：[部署文档.md](部署文档.md)**
+<h2>📌 部署流程见：<a href="部署文档.md">部署文档.md</a></h2>
 
 # 税务业务管理系统（传统 Java EE 版）
 
@@ -6,7 +6,11 @@
 
 传统版固定使用 `javax.servlet` 命名空间，**不使用任何 `jakarta.*` API**；请求入口是真正的 Struts `Action`，路由、拦截器与视图结果由 `struts.xml` 管理。
 
-![工作台](docs/screenshots/02-dashboard.png)
+## 最新界面
+
+![最新登录与注册页](docs/screenshots/01-login-register.png)
+
+![最新工作台](docs/screenshots/02-dashboard.png)
 
 ## 1. 技术栈
 

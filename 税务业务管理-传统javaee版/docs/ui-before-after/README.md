@@ -12,6 +12,7 @@
 | `declaration-form-after-1440.png` | 使用 `admin` 登录后生成的“新建申报”表单页 |
 | `declaration-detail-after-1440.png` | 使用 `admin` 登录后生成的申报详情页 |
 | `login-after-*.png` | 新版登录页在桌面和手机视口的实际截图 |
+| `login-register-after-*.png` | 最新“注册账号”页签在桌面和手机视口的实际截图 |
 | `login-after-1440x981-compact.png` | 针对大面积底部空白反馈的最终紧凑布局复核截图 |
 | `login-roles-after-1440.png` | 新版登录页“角色说明”页签实际截图 |
 | `reference-chaoxing-login.png` | 通过 Chromium 实际打开的 `https://v8.chaoxing.com/` 公开登录页参考截图 |

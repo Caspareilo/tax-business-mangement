@@ -80,6 +80,7 @@
 截图位于 `docs/screenshots/`：
 
 - `ui-unified-login-1440x900.png`
+- `ui-unified-login-register-1440x900.png`
 - `ui-unified-login-1366x768.png`
 - `ui-unified-login-390x844.png`
 - `ui-unified-dashboard-1440x900.png`

@@ -110,8 +110,10 @@ Dashboard 不包含前端静态演示数组，也没有虚构同比、环比：
 - `declaration-form-after-1440.png`
 - `declaration-detail-after-1440.png`
 - `login-after-1440.png`
+- `login-register-after-1440.png`
 - `login-after-1366.png`
 - `login-after-390.png`
+- `login-register-after-390.png`
 - `login-after-1440x981-compact.png`（与反馈截图同高度的紧凑布局复核）
 - `login-roles-after-1440.png`
 - `reference-chaoxing-login.png`（公开参考页现场抓取图，仅用于设计对照）
