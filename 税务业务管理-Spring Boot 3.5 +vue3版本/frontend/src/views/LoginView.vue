@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Lock, User } from '@element-plus/icons-vue'
 import type { FormInstance, FormRules } from 'element-plus'
+import { register as registerApi } from '@/api/auth'
 import { useAuthStore } from '@/stores/auth'
 import loginIllustration from '@/assets/login-illustration.svg'
 
@@ -11,12 +12,22 @@ const auth = useAuthStore()
 const route = useRoute()
 const router = useRouter()
 const formRef = ref<FormInstance>()
+const registerFormRef = ref<FormInstance>()
 const submitting = ref(false)
-const activeTab = ref<'account' | 'role'>('account')
+const registering = ref(false)
+type LoginTab = 'account' | 'register' | 'role'
+const activeTab = ref<LoginTab>('account')
 
 const form = reactive({
   username: '',
   password: '',
+})
+
+const registerForm = reactive({
+  displayName: '',
+  username: '',
+  password: '',
+  confirmPassword: '',
 })
 
 const rules: FormRules = {
@@ -27,6 +38,42 @@ const rules: FormRules = {
   password: [
     { required: true, message: '请输入登录密码', trigger: 'blur' },
     { min: 8, max: 64, message: '密码长度为 8-64 位', trigger: 'blur' },
+  ],
+}
+
+const registerRules: FormRules = {
+  displayName: [
+    { required: true, message: '请输入姓名或显示名称', trigger: 'blur' },
+    { max: 100, message: '显示名称不能超过 100 个字符', trigger: 'blur' },
+  ],
+  username: [
+    { required: true, message: '请输入登录账号', trigger: 'blur' },
+    {
+      pattern: /^[A-Za-z0-9_.-]{3,64}$/,
+      message: '账号只能包含字母、数字、下划线、点或短横线，长度 3-64',
+      trigger: 'blur',
+    },
+  ],
+  password: [
+    { required: true, message: '请设置密码', trigger: 'blur' },
+    {
+      pattern: /^(?=.*[A-Za-z])(?=.*\d).{8,64}$/,
+      message: '密码至少 8 位，且必须同时包含字母和数字',
+      trigger: 'blur',
+    },
+  ],
+  confirmPassword: [
+    { required: true, message: '请再次输入密码', trigger: 'blur' },
+    {
+      validator: (_rule, value, callback) => {
+        if (value !== registerForm.password) {
+          callback(new Error('两次输入的密码不一致'))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'blur',
+    },
   ],
 }
 
@@ -64,6 +111,33 @@ async function quickLogin(account: (typeof demoAccounts)[number]) {
   await nextTick()
   await handleSubmit()
 }
+
+async function handleRegister(): Promise<void> {
+  if (registering.value) return
+  const valid = await registerFormRef.value?.validate().catch(() => false)
+  if (!valid) return
+  registering.value = true
+  try {
+    const registeredUsername = registerForm.username.trim()
+    await registerApi({
+      username: registeredUsername,
+      displayName: registerForm.displayName.trim(),
+      password: registerForm.password,
+      confirmPassword: registerForm.confirmPassword,
+    })
+    ElMessage.success('注册成功，请使用新账号登录')
+    form.username = registeredUsername
+    form.password = ''
+    registerForm.password = ''
+    registerForm.confirmPassword = ''
+    activeTab.value = 'account'
+    await nextTick()
+  } catch (error) {
+    ElMessage.error(error instanceof Error ? error.message : '注册失败，请稍后重试')
+  } finally {
+    registering.value = false
+  }
+}
 </script>
 
 <template>
@@ -89,10 +163,10 @@ async function quickLogin(account: (typeof demoAccounts)[number]) {
       </section>
 
       <section class="login-main-area" aria-labelledby="loginHeading">
-        <div class="login-card-modern">
+        <div class="login-card-modern" :class="{ 'register-mode': activeTab === 'register' }">
           <h2 id="loginHeading">税务业务管理平台</h2>
 
-          <div class="login-tabs-modern" role="tablist" aria-label="登录方式">
+          <div class="login-tabs-modern" role="tablist" aria-label="账号操作">
             <button
               type="button"
               role="tab"
@@ -101,6 +175,15 @@ async function quickLogin(account: (typeof demoAccounts)[number]) {
               @click="activeTab = 'account'"
             >
               账号登录
+            </button>
+            <button
+              type="button"
+              role="tab"
+              :aria-selected="activeTab === 'register'"
+              :class="{ active: activeTab === 'register' }"
+              @click="activeTab = 'register'"
+            >
+              注册账号
             </button>
             <button
               type="button"
@@ -146,7 +229,6 @@ async function quickLogin(account: (typeof demoAccounts)[number]) {
                 登录
               </el-button>
             </el-form>
-
             <section class="test-account-panel" aria-labelledby="testAccountTitle">
               <div class="test-account-head">
                 <strong id="testAccountTitle">测试账号 · 点击即登录</strong>
@@ -168,6 +250,74 @@ async function quickLogin(account: (typeof demoAccounts)[number]) {
                 </button>
               </div>
             </section>
+          </div>
+
+          <div v-show="activeTab === 'register'" class="login-tab-content">
+            <p class="role-guide-hint register-hint">
+              新账号默认获得“只读访客”权限，注册后可联系管理员调整角色。
+            </p>
+            <el-form
+              ref="registerFormRef"
+              :model="registerForm"
+              :rules="registerRules"
+              label-position="top"
+              @submit.prevent="handleRegister"
+            >
+              <el-form-item label="姓名或显示名称" prop="displayName">
+                <el-input
+                  v-model="registerForm.displayName"
+                  :prefix-icon="User"
+                  size="large"
+                  maxlength="100"
+                  placeholder="例如：李同学"
+                  autocomplete="name"
+                />
+              </el-form-item>
+              <el-form-item label="登录账号" prop="username">
+                <el-input
+                  v-model="registerForm.username"
+                  :prefix-icon="User"
+                  size="large"
+                  maxlength="64"
+                  placeholder="3-64 位字母、数字或 _ . -"
+                  autocomplete="username"
+                />
+              </el-form-item>
+              <el-form-item label="设置密码" prop="password">
+                <el-input
+                  v-model="registerForm.password"
+                  :prefix-icon="Lock"
+                  type="password"
+                  size="large"
+                  maxlength="64"
+                  placeholder="至少 8 位，包含字母和数字"
+                  autocomplete="new-password"
+                  show-password
+                />
+              </el-form-item>
+              <el-form-item label="确认密码" prop="confirmPassword">
+                <el-input
+                  v-model="registerForm.confirmPassword"
+                  :prefix-icon="Lock"
+                  type="password"
+                  size="large"
+                  maxlength="64"
+                  placeholder="请再次输入密码"
+                  autocomplete="new-password"
+                  show-password
+                  @keyup.enter="handleRegister"
+                />
+              </el-form-item>
+              <el-button
+                class="login-submit-modern register-submit"
+                type="primary"
+                size="large"
+                :loading="registering"
+                @click="handleRegister"
+              >
+                创建只读账号
+              </el-button>
+            </el-form>
           </div>
 
           <div v-show="activeTab === 'role'" class="login-tab-content">
@@ -304,7 +454,7 @@ async function quickLogin(account: (typeof demoAccounts)[number]) {
 
 .login-tabs-modern {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   margin-bottom: 48px;
   border-bottom: 1px solid #e8e8e8;
 }
@@ -395,6 +545,35 @@ async function quickLogin(account: (typeof demoAccounts)[number]) {
   border-color: #5f5bd6;
   background: #5f5bd6;
   color: #ffffff;
+}
+
+.register-hint {
+  margin-bottom: 14px;
+  line-height: 1.6;
+}
+
+.register-submit {
+  margin-top: 16px;
+}
+
+.login-card-modern.register-mode h2 {
+  margin-bottom: 34px;
+}
+
+.login-card-modern.register-mode .login-tabs-modern {
+  margin-bottom: 28px;
+}
+
+.login-card-modern.register-mode :deep(.el-form-item) {
+  margin-bottom: 14px;
+}
+
+.login-card-modern.register-mode .register-submit {
+  margin-top: 12px;
+}
+
+.login-card-modern.register-mode .login-footer-note {
+  margin-top: 16px;
 }
 
 .test-account-panel {

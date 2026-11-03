@@ -3,22 +3,30 @@
 
     var tabs = Array.prototype.slice.call(document.querySelectorAll("[data-login-tab]"));
     var accountPanel = document.getElementById("accountPanel");
+    var registerPanel = document.getElementById("registerPanel");
     var rolePanel = document.getElementById("rolePanel");
     var loginForm = document.getElementById("loginForm");
     var usernameInput = document.getElementById("username");
     var passwordInput = document.getElementById("password");
-    var passwordToggle = document.querySelector("[data-password-toggle]");
+    var registerUsernameInput = document.getElementById("registerUsername");
+    var registerPasswordInput = document.getElementById("registerPassword");
+    var registerConfirmPasswordInput = document.getElementById("registerConfirmPassword");
 
-    if (passwordToggle && passwordInput) {
+    document.querySelectorAll("[data-password-toggle]").forEach(function (passwordToggle) {
+        var targetId = passwordToggle.getAttribute("data-password-target");
+        var targetInput = targetId ? document.getElementById(targetId) : passwordInput;
+        if (!targetInput) {
+            return;
+        }
         passwordToggle.addEventListener("click", function () {
-            var revealing = passwordInput.type === "password";
-            passwordInput.type = revealing ? "text" : "password";
+            var revealing = targetInput.type === "password";
+            targetInput.type = revealing ? "text" : "password";
             passwordToggle.setAttribute("aria-pressed", revealing ? "true" : "false");
             passwordToggle.setAttribute("aria-label", revealing ? "隐藏密码" : "显示密码");
             passwordToggle.classList.toggle("is-visible", revealing);
-            passwordInput.focus();
+            targetInput.focus();
         });
-    }
+    });
 
     function activateTab(name, moveFocus) {
         tabs.forEach(function (tab) {
@@ -33,12 +41,19 @@
         if (accountPanel) {
             accountPanel.hidden = name !== "account";
         }
+        if (registerPanel) {
+            registerPanel.hidden = name !== "register";
+        }
         if (rolePanel) {
             rolePanel.hidden = name !== "role";
         }
         if (name === "account" && usernameInput) {
             window.setTimeout(function () {
                 usernameInput.focus();
+            }, 0);
+        } else if (name === "register" && registerUsernameInput) {
+            window.setTimeout(function () {
+                registerUsernameInput.focus();
             }, 0);
         }
     }
@@ -79,4 +94,23 @@
             }
         });
     });
+
+    var registerForm = document.getElementById("registerForm");
+    if (registerForm && registerPasswordInput && registerConfirmPasswordInput) {
+        registerForm.addEventListener("submit", function (event) {
+            if (registerPasswordInput.value !== registerConfirmPasswordInput.value) {
+                event.preventDefault();
+                registerConfirmPasswordInput.setCustomValidity("两次输入的密码不一致");
+                registerConfirmPasswordInput.reportValidity();
+                registerConfirmPasswordInput.focus();
+                return;
+            }
+            registerConfirmPasswordInput.setCustomValidity("");
+        });
+        registerConfirmPasswordInput.addEventListener("input", function () {
+            registerConfirmPasswordInput.setCustomValidity("");
+        });
+    }
+
+    activateTab(document.body.getAttribute("data-initial-login-tab") || "account", false);
 })();

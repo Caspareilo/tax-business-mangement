@@ -3,6 +3,7 @@ package com.example.tax.auth.controller;
 import com.example.tax.audit.service.AuditLogService;
 import com.example.tax.auth.dto.ChangePasswordRequest;
 import com.example.tax.auth.dto.LoginRequest;
+import com.example.tax.auth.dto.RegisterRequest;
 import com.example.tax.auth.service.AuthService;
 import com.example.tax.auth.vo.CurrentUserVO;
 import com.example.tax.common.api.ApiResponse;
@@ -87,6 +88,12 @@ public class AuthController {
             session.invalidate();
         }
         SecurityContextHolder.clearContext();
+        return ApiResponse.ok();
+    }
+
+    @PostMapping("/register")
+    public ApiResponse<Void> register(@Valid @RequestBody RegisterRequest request) {
+        authService.register(request);
         return ApiResponse.ok();
     }
 

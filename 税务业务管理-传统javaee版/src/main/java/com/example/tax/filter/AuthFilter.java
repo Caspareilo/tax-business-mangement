@@ -41,11 +41,11 @@ public class AuthFilter implements Filter {
         HttpSession session = req.getSession(true);
         req.setAttribute("csrfToken", CsrfUtil.getToken(session));
 
-        boolean loginPage = "/auth/login".equals(path);
+        boolean publicAuthPage = "/auth/login".equals(path) || "/auth/register".equals(path);
         SessionUser user = (SessionUser) session.getAttribute("currentUser");
         req.setAttribute("currentUser", user);
 
-        if (loginPage) {
+        if (publicAuthPage) {
             if ("POST".equalsIgnoreCase(req.getMethod()) && !CsrfUtil.isValid(req)) {
                 req.setAttribute("errorMessage", "安全校验失败（CSRF Token 缺失或过期），请重新打开登录页");
                 resp.setStatus(HttpServletResponse.SC_FORBIDDEN);

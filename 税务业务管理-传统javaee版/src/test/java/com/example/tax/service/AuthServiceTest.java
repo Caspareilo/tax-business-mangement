@@ -2,6 +2,7 @@ package com.example.tax.service;
 
 import com.example.tax.dto.AuditLogFilter;
 import com.example.tax.exception.BusinessException;
+import com.example.tax.exception.ValidationException;
 import com.example.tax.model.OperationLog;
 import com.example.tax.security.SessionUser;
 import com.example.tax.support.DatabaseTestBase;
@@ -70,5 +71,38 @@ class AuthServiceTest extends DatabaseTestBase {
         BusinessException exception = assertThrows(BusinessException.class,
                 () -> login("nobody", "Nobody@123"));
         assertEquals("账号或密码错误", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("AUTH-05 自助注册创建只读账号并可登录")
+    void auth05PublicRegistrationCreatesViewer() throws Exception {
+        AuthService service = new AuthService();
+        long userId = service.register("new_student", "新同学",
+                "Register123", "Register123", "test-register");
+
+        assertTrue(userId > 0);
+        SessionUser registered = login("new_student", "Register123");
+        assertTrue(registered.hasRole("VIEWER"));
+        assertTrue(registered.hasPermission("dashboard:view"));
+        assertFalse(registered.hasPermission("declaration:create"));
+        assertEquals("只读用户", registered.getRoleLabel());
+    }
+
+    @Test
+    @DisplayName("AUTH-06 自助注册拒绝重复账号和弱密码")
+    void auth06PublicRegistrationValidation() throws Exception {
+        AuthService service = new AuthService();
+        service.register("unique_user", "唯一用户",
+                "Register123", "Register123", "test-register");
+
+        ValidationException duplicate = assertThrows(ValidationException.class,
+                () -> service.register("unique_user", "重复用户",
+                        "Register123", "Register123", "test-register"));
+        assertTrue(duplicate.getFieldErrors().containsKey("username"));
+
+        ValidationException weakPassword = assertThrows(ValidationException.class,
+                () -> service.register("weak_password", "弱密码用户",
+                        "12345678", "12345678", "test-register"));
+        assertTrue(weakPassword.getFieldErrors().containsKey("password"));
     }
 }

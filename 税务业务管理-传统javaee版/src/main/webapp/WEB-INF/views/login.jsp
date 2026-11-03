@@ -6,14 +6,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>登录 - 税务业务管理系统</title>
+    <title>登录与注册 - 税务业务管理系统</title>
     <link rel="icon" href="${ctx}/assets/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="${ctx}/assets/vendor/bootstrap.min.css">
-    <link rel="stylesheet" href="${ctx}/assets/css/app.css">
-    <link rel="stylesheet" href="${ctx}/assets/css/views.css">
-    <script src="${ctx}/assets/js/login.js" defer></script>
+    <link rel="stylesheet" href="${ctx}/assets/css/app.css?v=20261103-register">
+    <link rel="stylesheet" href="${ctx}/assets/css/views.css?v=20261103-register">
+    <script src="${ctx}/assets/js/login.js?v=20261103-register" defer></script>
 </head>
-<body class="login-page">
+<body class="login-page" data-initial-login-tab="${empty activeLoginTab ? 'account' : activeLoginTab}">
 <main class="login-shell">
     <section class="login-intro" aria-labelledby="loginBrandTitle">
         <div class="login-intro-inner">
@@ -35,10 +35,18 @@
         <div class="login-card">
             <h2 class="login-heading" id="loginHeading">税务业务管理平台</h2>
 
-            <div class="login-tabs" role="tablist" aria-label="登录方式">
-                <button class="login-tab active" id="accountTab" type="button" role="tab"
-                        aria-selected="true" aria-controls="accountPanel" data-login-tab="account">
+            <div class="login-tabs" role="tablist" aria-label="账号操作">
+                <button class="login-tab ${activeLoginTab == 'register' ? '' : 'active'}"
+                        id="accountTab" type="button" role="tab"
+                        aria-selected="${activeLoginTab == 'register' ? 'false' : 'true'}"
+                        aria-controls="accountPanel" data-login-tab="account">
                     账号登录
+                </button>
+                <button class="login-tab ${activeLoginTab == 'register' ? 'active' : ''}"
+                        id="registerTab" type="button" role="tab"
+                        aria-selected="${activeLoginTab == 'register' ? 'true' : 'false'}"
+                        aria-controls="registerPanel" data-login-tab="register">
+                    注册账号
                 </button>
                 <button class="login-tab" id="roleTab" type="button" role="tab"
                         aria-selected="false" aria-controls="rolePanel" data-login-tab="role">
@@ -97,7 +105,6 @@
                         登录
                     </button>
                 </form>
-
                 <section class="login-test-accounts" aria-labelledby="testAccountsTitle">
                     <div class="login-test-head">
                         <strong id="testAccountsTitle">测试账号 · 点击即登录</strong>
@@ -136,6 +143,124 @@
                         </button>
                     </div>
                 </section>
+            </div>
+
+            <div class="login-tab-panel" id="registerPanel" role="tabpanel"
+                 aria-labelledby="registerTab" hidden>
+                <p class="login-subtitle">
+                    新账号默认获得“只读访客”权限，注册后可联系管理员调整角色。
+                </p>
+                <c:if test="${not empty registrationError}">
+                    <div class="alert alert-danger" role="alert">
+                        <c:out value="${registrationError}"/>
+                    </div>
+                </c:if>
+
+                <form id="registerForm" class="login-register-form" method="post"
+                      action="${ctx}/auth/register.action" novalidate>
+                    <input type="hidden" name="csrfToken" value="${csrfToken}">
+                    <div class="login-form-field">
+                        <label class="form-label" for="registerDisplayName">姓名或显示名称</label>
+                        <div class="login-input-wrap">
+                            <svg class="login-input-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="8" r="4" fill="none"
+                                        stroke="currentColor" stroke-width="1.8"/>
+                                <path d="M4.8 20c.7-4 3.3-6 7.2-6s6.5 2 7.2 6"
+                                      fill="none" stroke="currentColor" stroke-width="1.8"
+                                      stroke-linecap="round"/>
+                            </svg>
+                            <input class="form-control ${not empty registrationFieldErrors.displayName ? 'is-invalid' : ''}"
+                                   id="registerDisplayName" name="displayName" type="text"
+                                   maxlength="100" autocomplete="name" required
+                                   placeholder="例如：李同学"
+                                   value="<c:out value='${registerDisplayName}'/>">
+                        </div>
+                        <c:if test="${not empty registrationFieldErrors.displayName}">
+                            <div class="invalid-feedback d-block">
+                                <c:out value="${registrationFieldErrors.displayName}"/>
+                            </div>
+                        </c:if>
+                    </div>
+                    <div class="login-form-field">
+                        <label class="form-label" for="registerUsername">登录账号</label>
+                        <div class="login-input-wrap">
+                            <svg class="login-input-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="8" r="4" fill="none"
+                                        stroke="currentColor" stroke-width="1.8"/>
+                                <path d="M4.8 20c.7-4 3.3-6 7.2-6s6.5 2 7.2 6"
+                                      fill="none" stroke="currentColor" stroke-width="1.8"
+                                      stroke-linecap="round"/>
+                            </svg>
+                            <input class="form-control ${not empty registrationFieldErrors.username ? 'is-invalid' : ''}"
+                                   id="registerUsername" name="username" type="text"
+                                   minlength="3" maxlength="64" autocomplete="username" required
+                                   pattern="[A-Za-z0-9_.-]{3,64}"
+                                   placeholder="3-64 位字母、数字或 _ . -"
+                                   value="<c:out value='${registerUsername}'/>">
+                        </div>
+                        <c:if test="${not empty registrationFieldErrors.username}">
+                            <div class="invalid-feedback d-block">
+                                <c:out value="${registrationFieldErrors.username}"/>
+                            </div>
+                        </c:if>
+                    </div>
+                    <div class="login-form-field">
+                        <label class="form-label" for="registerPassword">设置密码</label>
+                        <div class="login-input-wrap">
+                            <svg class="login-input-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="5" y="10" width="14" height="10" rx="2" fill="none"
+                                      stroke="currentColor" stroke-width="1.8"/>
+                                <path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none"
+                                      stroke="currentColor" stroke-width="1.8"
+                                      stroke-linecap="round"/>
+                            </svg>
+                            <input class="form-control ${not empty registrationFieldErrors.password ? 'is-invalid' : ''}"
+                                   id="registerPassword" name="password" type="password"
+                                   minlength="8" maxlength="64" autocomplete="new-password" required
+                                   placeholder="至少 8 位，包含字母和数字">
+                            <button class="password-toggle" type="button" data-password-toggle
+                                    data-password-target="registerPassword"
+                                    aria-label="显示密码" aria-pressed="false">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M2.8 12s3.2-5 9.2-5 9.2 5 9.2 5-3.2 5-9.2 5-9.2-5-9.2-5z"
+                                          fill="none" stroke="currentColor" stroke-width="1.8"/>
+                                    <circle cx="12" cy="12" r="2.5" fill="none"
+                                            stroke="currentColor" stroke-width="1.8"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <c:if test="${not empty registrationFieldErrors.password}">
+                            <div class="invalid-feedback d-block">
+                                <c:out value="${registrationFieldErrors.password}"/>
+                            </div>
+                        </c:if>
+                    </div>
+                    <div class="login-form-field">
+                        <label class="form-label" for="registerConfirmPassword">确认密码</label>
+                        <div class="login-input-wrap">
+                            <svg class="login-input-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="5" y="10" width="14" height="10" rx="2" fill="none"
+                                      stroke="currentColor" stroke-width="1.8"/>
+                                <path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none"
+                                      stroke="currentColor" stroke-width="1.8"
+                                      stroke-linecap="round"/>
+                            </svg>
+                            <input class="form-control ${not empty registrationFieldErrors.confirmPassword ? 'is-invalid' : ''}"
+                                   id="registerConfirmPassword" name="confirmPassword" type="password"
+                                   minlength="8" maxlength="64" autocomplete="new-password" required
+                                   placeholder="请再次输入密码">
+                        </div>
+                        <c:if test="${not empty registrationFieldErrors.confirmPassword}">
+                            <div class="invalid-feedback d-block">
+                                <c:out value="${registrationFieldErrors.confirmPassword}"/>
+                            </div>
+                        </c:if>
+                    </div>
+                    <button class="btn btn-primary w-100 login-submit login-register-submit"
+                            type="submit">
+                        创建只读账号
+                    </button>
+                </form>
             </div>
 
             <div class="login-tab-panel" id="rolePanel" role="tabpanel" aria-labelledby="roleTab" hidden>

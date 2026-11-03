@@ -8,6 +8,8 @@
 /tomcat-verify/
 /开发文档/
 /*.docx
+/*.rar
+/apache-tomcat-9.0.123/
 
 # Common local system files
 Thumbs.db

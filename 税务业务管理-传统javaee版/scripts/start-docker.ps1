@@ -98,6 +98,7 @@ Write-Host '  analyst1 / Analyst@123   统计分析员'
 Write-Host '  viewer1 / Viewer@123     只读访客'
 Write-Host ''
 Write-Host '技术栈：Struts 6.12 + JSP/JSTL + JDBC + MySQL 8 + Tomcat 9（全程 javax.servlet）'
+Write-Host '登录页支持自助注册；新账号默认分配只读访客（VIEWER）角色。'
 
 if (-not $NoBrowser) {
     Start-Process $appUrl

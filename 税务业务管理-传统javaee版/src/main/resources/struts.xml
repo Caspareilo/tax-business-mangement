@@ -48,6 +48,8 @@
     <package name="tax-auth" extends="tax-base" namespace="/auth">
         <action name="login"
                 class="com.example.tax.action.LoginAction"/>
+        <action name="register"
+                class="com.example.tax.action.RegisterAction"/>
         <action name="logout"
                 class="com.example.tax.action.LogoutAction"/>
     </package>

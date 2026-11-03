@@ -11,6 +11,7 @@
 - 浏览器端 Axios 需携带 `withCredentials: true`。
 - 受保护接口在未登录时返回 `401`，已登录但缺少权限时返回 `403`。
 - 登录、登出、当前用户、修改密码位于 `/api/v1/auth/*`。
+- `POST /api/v1/auth/register` 允许匿名访问；新用户固定分配 `VIEWER` 角色。
 
 ### 1.2 统一响应结构
 
@@ -79,6 +80,15 @@
 | 日志 | `audit:menu` | `audit:read` | - | - |
 
 ## 3. 认证接口
+
+### POST `/api/v1/auth/register`
+
+- 权限：公开。
+- 请求字段：`username`、`displayName`、`password`、`confirmPassword`。
+- 账号长度 3-64，只允许字母、数字、下划线、点和短横线。
+- 密码至少 8 位，必须同时包含字母和数字。
+- 新账号固定分配 `VIEWER` 只读角色，不接受客户端传入角色信息。
+- 成功返回 `200`；重复账号返回 `409`；非法格式、弱密码或确认密码不一致返回 `400`。
 
 ### POST `/api/v1/auth/login`
 

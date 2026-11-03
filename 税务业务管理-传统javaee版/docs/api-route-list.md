@@ -14,12 +14,16 @@
 | --- | --- | --- | --- | --- |
 | GET | `/auth/login.action` | 匿名 | 登录页；已登录用户直接跳转工作台 | 200 HTML |
 | POST | `/auth/login.action` | 匿名 + CSRF | 校验账号密码；停用账号拒绝；成功后轮换 Session ID | 302 `/dashboard.action` |
+| GET | `/auth/register.action` | 匿名 | 打开登录页并定位“注册账号”页签 | 200 HTML |
+| POST | `/auth/register.action` | 匿名 + CSRF | 创建只读账号并固定分配 `VIEWER` 角色 | 302 登录页并预填账号 |
 | POST | `/auth/logout.action` | 登录 + CSRF | 记录退出日志、`session.invalidate()` | 302 `/auth/login.action?logout=1` |
 | GET | `/auth/logout.action` | 登录 | 不做状态变更，重定向工作台 | 302 `/dashboard.action` |
 | GET | `/profile.action` | 登录 | 个人资料与修改密码表单 | 200 HTML |
 | POST | `/profile/password.action` | 登录 + CSRF | 校验旧密码、新密码强度与确认密码 | 302 `/profile.action` |
 
 登录失败统一提示“账号或密码错误”，不区分账号不存在与密码错误；停用账号单独提示。审计日志只记录用户名、结果、IP/追踪号，不记录密码。
+
+注册字段为 `displayName`、`username`、`password`、`confirmPassword`。账号长度 3-64，密码至少 8 位且包含字母和数字；客户端不能提交角色字段。
 
 ## 2. 工作台
 

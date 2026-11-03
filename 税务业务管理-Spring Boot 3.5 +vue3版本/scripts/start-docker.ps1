@@ -95,6 +95,7 @@ Write-Host ''
 Write-Host "系统已启动：$appUrl" -ForegroundColor Green
 Write-Host "Swagger：http://localhost:$backendPort/swagger-ui.html"
 Write-Host '演示账号：admin / Demo@1234'
+Write-Host '登录页支持自助注册；新账号默认分配只读访客（VIEWER）角色。'
 Write-Host '首次启动完成后，以后只需运行 docker-start.bat。'
 
 if (-not $NoBrowser) {

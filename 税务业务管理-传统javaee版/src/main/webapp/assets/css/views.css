@@ -1602,7 +1602,7 @@
 
 .login-tabs {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0;
     margin: 0 0 48px;
     border-bottom: 1px solid #e8e8e8;
@@ -1742,6 +1742,20 @@
     border-color: #5f5bd6;
     background: #5f5bd6;
     color: #ffffff;
+}
+
+.login-register-form .login-form-field {
+    margin-bottom: 13px;
+}
+
+.login-register-submit {
+    margin-top: 16px;
+}
+
+.login-register-form .invalid-feedback {
+    margin-top: 5px;
+    color: #d9363e;
+    font-size: 11px;
 }
 
 .login-test-accounts {

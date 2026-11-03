@@ -68,4 +68,59 @@ class AuthAndPermissionTest extends IntegrationTestSupport {
                                 """))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    void publicRegistrationCreatesActiveViewerWhoCanLogin() throws Exception {
+        String username = "registered_viewer";
+        String password = "Register123";
+        mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(java.util.Map.of(
+                                "username", username,
+                                "displayName", "自助注册用户",
+                                "password", password,
+                                "confirmPassword", password))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("OK"));
+
+        SysUser registered = userMapper.selectOne(
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<SysUser>()
+                        .eq(SysUser::getUsername, username));
+        assertThat(registered).isNotNull();
+        assertThat(registered.getStatus()).isEqualTo("ACTIVE");
+        assertThat(userMapper.selectRoleCodes(registered.getId())).containsExactly("VIEWER");
+
+        MockHttpSession session = login(username, password);
+        mockMvc.perform(get("/api/v1/auth/me").session(session))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.roles[0]").value("VIEWER"))
+                .andExpect(jsonPath("$.data.permissions").isArray());
+    }
+
+    @Test
+    void publicRegistrationRejectsDuplicateAndWeakPassword() throws Exception {
+        String password = "Register123";
+        String body = objectMapper.writeValueAsString(java.util.Map.of(
+                "username", "register_once",
+                "displayName", "首次注册",
+                "password", password,
+                "confirmPassword", password));
+        mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isConflict());
+
+        mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"username":"weak_register","displayName":"弱密码",
+                                 "password":"12345678","confirmPassword":"12345678"}
+                                """))
+                .andExpect(status().isBadRequest());
+    }
 }

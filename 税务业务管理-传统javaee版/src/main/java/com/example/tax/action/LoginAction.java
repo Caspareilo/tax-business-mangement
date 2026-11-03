@@ -28,6 +28,10 @@ public class LoginAction extends BaseAction {
         if ("1".equals(request.getParameter("logout"))) {
             request.setAttribute("infoMessage", "您已安全退出系统");
         }
+        if ("1".equals(request.getParameter("registered"))) {
+            request.setAttribute("infoMessage", "注册成功，请使用新账号登录");
+            request.setAttribute("username", WebUtil.trim(request, "username"));
+        }
         forward(request, response, "login.jsp");
     }
 

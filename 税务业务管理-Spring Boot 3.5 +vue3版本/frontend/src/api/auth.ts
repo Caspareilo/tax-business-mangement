@@ -6,6 +6,15 @@ export async function login(payload: { username: string; password: string }): Pr
   return response.data.data
 }
 
+export async function register(payload: {
+  username: string
+  displayName: string
+  password: string
+  confirmPassword: string
+}): Promise<void> {
+  await http.post('/auth/register', payload)
+}
+
 export async function fetchMe(): Promise<CurrentUser> {
   const response = await http.get<ApiResponse<CurrentUser>>('/auth/me')
   return response.data.data
