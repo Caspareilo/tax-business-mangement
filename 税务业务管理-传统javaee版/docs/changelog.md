@@ -10,6 +10,7 @@
 - 新增 `scripts/verify-baseline.ps1`，自动检查 WAR 打包、JDK、Tomcat、MySQL、`javax.servlet` 和运行依赖。
 - 新增 `docs/version-baseline.md`，记录最终版本基线与验证命令。
 - 课程仓库只发布传统 Java EE 8 项目，不再发布 Spring Boot 3 / Vue 3 实现。
+- AuthFilter 对浏览器扩展注入的 `/hybridaction/` 统计请求返回 204，避免误触发业务 404 页面。
 
 ### 验证
 

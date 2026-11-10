@@ -671,6 +671,11 @@ MySQL 数据卷会保留第一次初始化时的数据库账号密码。修改 `
 - Tomcat 使用 `-Dfile.encoding=UTF-8`。
 - JSP 使用 UTF-8。
 
+### 11. 浏览器扩展请求 404
+
+如果浏览器请求 `/hybridaction/zybTrackerStatisticsAction` 并弹出 404，请求通常来自浏览器扩展而不是项目页面。
+当前过滤链对该前缀返回 HTTP 204，不再渲染业务 404 页面；其他未知业务路由仍保持 404。
+
 ---
 
 ## 八、部署验收清单

@@ -33,6 +33,13 @@ public class AuthFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) response;
         String path = requestPath(req);
 
+        // Browser extensions sometimes inject analytics endpoints into every page.
+        // Acknowledge known tracking routes without rendering the application's 404 page.
+        if (path.startsWith("/hybridaction/")) {
+            resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            return;
+        }
+
         if (isStaticAsset(path) || "/favicon.ico".equals(path)) {
             chain.doFilter(request, response);
             return;

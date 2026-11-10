@@ -276,3 +276,6 @@ Servlet API 边界说明：本项目源码、`web.xml`、Tomcat 和 Servlet/JSP 
 
 **登录后立即回到登录页**  
 确认浏览器允许 Cookie；应用未配置 HTTPS 时不要设置 `Secure` Cookie。反向代理场景需正确转发 `JSESSIONID`。
+
+**浏览器弹出 `/hybridaction/zybTrackerStatisticsAction` 404**
+该请求由部分浏览器扩展注入，不属于项目业务路由。当前版本对 `/hybridaction/` 前缀返回 204，避免第三方统计请求触发应用 404 页面；真实未知业务路径仍返回 404。
