@@ -1,9 +1,9 @@
 # 测试计划与执行结果
 
 - 版本：V1.0
-- 测试日期：2026-10-29
+- 测试日期：2026-10-29，合规复测：2026-11-10
 - 测试负责人：项目开发者
-- 结论：自动化测试 28/28 通过；Tomcat 9 实际部署验证通过；MySQL 实库验证因本机缺少可用账号密码未执行。
+- 结论：自动化测试 30/30 通过；Tomcat 9 实际部署验证通过；Docker 模式下使用 MySQL 8.0.46 实库。
 
 ## 1. 测试目标
 
@@ -19,11 +19,11 @@
 | 项目 | 实际值 |
 | --- | --- |
 | 操作系统 | Windows 11 Home China 10.0.26200 |
-| JDK | 23.0.2（`maven.compiler.release=11`，字节码目标 Java 11） |
+| JDK | 11（Docker 构建与运行）；`maven.compiler.release=11` |
 | Maven | 3.9.14 |
 | 构建产物 | `target/tax-business-system.war`（约 5.0 MB） |
 | 应用服务器 | Apache Tomcat 9.0.123 |
-| 生产数据库 | MySQL 9.0.1 已安装、服务运行；**本机无可用账号密码，未执行建库** |
+| 生产数据库 | MySQL 8.0.46（Docker Compose） |
 | 自动化测试数据库 | H2 2.2.224，`MODE=MySQL;DATABASE_TO_LOWER=TRUE`，每个测试新建内存库 |
 | 浏览器 | Chromium 1248（Playwright 驱动，headless），1440px 视口 |
 | 端口 | Tomcat 验证实例 18080（避免与本机 8080 冲突） |
@@ -51,7 +51,7 @@ mvn clean test
 实际结果（Surefire 报告）：
 
 ```text
-Tests run: 28, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 30, Failures: 0, Errors: 0, Skipped: 0
 ```
 
 | 测试类 | 用例数 | 覆盖点 |
@@ -177,7 +177,7 @@ Tests run: 28, Failures: 0, Errors: 0, Skipped: 0
 
 ## 7. 退出标准
 
-- [x] 所有自动化测试通过（28/28）
+- [x] 所有自动化测试通过（30/30）
 - [x] WAR 在 Tomcat 9 启动，核心页面 200
 - [x] 角色越权返回 403
 - [x] CSRF 缺失被拒绝

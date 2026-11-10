@@ -72,7 +72,7 @@ Dashboard 不包含前端静态演示数组，也没有虚构同比、环比：
 
 ### 5.1 构建与自动化测试
 
-- `mvn clean test`：28 个测试全部通过，0 失败、0 错误、0 跳过。
+- `mvn clean test`：当前 30 个测试全部通过，0 失败、0 错误、0 跳过。
 - `mvn package`：构建成功，生成 `target/tax-business-system.war`。
 - CSS 花括号与 `app.js`、`charts.js`、`login.js` 语法检查通过。
 - Tomcat 9.0.123 实际部署成功，登录页 JSP 正常编译。

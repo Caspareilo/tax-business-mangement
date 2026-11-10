@@ -1,5 +1,22 @@
 # 变更记录
 
+## V1.4 - 2026-11-10
+
+### 课程技术基线统一
+
+- 本地注册的 `/hello` Servlet 已加入传统项目，用于实验一生命周期和中文响应验证。
+- Struts 控制层固定为 2.5.33，Servlet/JSP API 固定为 Java EE 8 的 `javax.servlet` 体系。
+- Docker 构建与运行 JDK 固定为 Eclipse Temurin 11，Tomcat 固定为 9.0.123，MySQL 固定为 8.0.46。
+- 新增 `scripts/verify-baseline.ps1`，自动检查 WAR 打包、JDK、Tomcat、MySQL、`javax.servlet` 和运行依赖。
+- 新增 `docs/version-baseline.md`，记录最终版本基线与验证命令。
+- 课程仓库只发布传统 Java EE 8 项目，不再发布 Spring Boot 3 / Vue 3 实现。
+
+### 验证
+
+- `mvn clean test`：30 个测试全部通过。
+- `mvn clean package`：WAR 构建成功。
+- 本地 Tomcat 9.0.123 部署后，`/hello?name=吴学孟` 返回 HTTP 200。
+
 ## V1.3 — 2026-11-03
 
 ### 登录页自助注册
@@ -22,7 +39,7 @@
 
 ### Struts 迁移
 
-- Web 入口由 14 个 `HttpServlet` 迁移为 14 个 Struts 6.12 Action，保留 Service/DAO/JSP 分层。
+- Web 入口由 14 个 `HttpServlet` 迁移为 14 个 Struts Action，保留 Service/DAO/JSP 分层。
 - 新增 `BaseAction`、`struts.xml`，按 `/auth`、`/declarations`、`/admin/users` 等命名空间配置 Action 和 JSP Result。
 - 业务入口统一为 `.action`，同步更新 JSP 链接、表单、分页与内部 PRG 重定向。
 - 保持 Servlet 4.0 / JSP 2.3 / JDBC / MySQL 传统技术栈，固定使用 `javax.servlet`，不升级 Struts 7 或 Tomcat 10+。
@@ -32,7 +49,7 @@
 
 - 新增 `Dockerfile`、`compose.yaml`、`.env.docker.example`。
 - 新增 `START.bat`、`docker-start.bat`、`docker-stop.bat`、`docker-logs.bat` 与 PowerShell 启动脚本。
-- Docker 默认入口为 <http://localhost:18082>，与 Spring Boot 版 18080 错开。
+- Docker 默认入口为 <http://localhost:18082>。
 - MySQL 首次启动自动导入 schema 与演示数据，数据库使用命名卷持久化。
 - Docker 构建使用 Maven cache mount；应用使用 Tomcat 9.0.123，健康检查覆盖 Struts 登录页。
 
@@ -98,7 +115,7 @@
 
 ### 已知限制
 
-- 本机 MySQL 9.0.1 无可用账号密码，MySQL 建库脚本未在本机执行；自动化测试与部署验证使用 H2 MySQL 兼容模式。
+- 本地非 Docker 模式需要自行提供 MySQL 8 账号；Docker 模式自动初始化 MySQL 8.0.46。
 - 未做多浏览器、移动端真机、性能压测与专业渗透测试。
 - 未接入真实税务接口、邮件或短信服务。
 - 错误摘要暂未实现 GOV.UK 式的字段锚点跳转与自动聚焦，仅提供顶部提示与字段内联错误。
