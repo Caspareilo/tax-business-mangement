@@ -1,10 +1,10 @@
-<h2>📌 部署流程见：<a href="部署文档.md">部署文档.md</a></h2>
+<h2>部署流程见：<a href="DEPLOY.md">DEPLOY.md</a></h2>
 
 # 税务业务管理系统（传统 Java EE 版）
 
-基于 **Struts 6 + JSP/JSTL + JDBC + MySQL** 的传统 Java EE 课程设计项目，部署于 Apache Tomcat 9。系统覆盖纳税人管理、动态表单模板、申报流转、审核、统计、综合查询与操作审计，全部业务数据均为虚构演示数据。
+基于 **Java EE 8 + Struts 2.5.33 + JSP/JSTL + JDBC + MySQL 8** 的课程设计项目，部署于 Apache Tomcat 9。系统覆盖纳税人管理、动态表单模板、申报流转、审核、统计、综合查询与操作审计，全部业务数据均为虚构演示数据。
 
-传统版固定使用 `javax.servlet` 命名空间，**不使用任何 `jakarta.*` API**；请求入口是真正的 Struts `Action`，路由、拦截器与视图结果由 `struts.xml` 管理。
+项目固定使用 `javax.servlet` 命名空间，不使用 Jakarta EE 9+ API；请求入口是真正的 Struts `Action`，路由、拦截器与视图结果由 `struts.xml` 管理。
 
 ## 最新界面
 
@@ -16,22 +16,23 @@
 
 | 层次 | 技术 | 版本/约束 |
 | --- | --- | --- |
-| Web 容器 | Apache Tomcat | 9.0.x（测试使用 9.0.123） |
-| Web MVC | Apache Struts | 6.12.0，基于 `javax.servlet`，**不使用 Struts 7 / Jakarta** |
-| Servlet/JSP | `javax.servlet` / JSP | Servlet 4.0 / JSP 2.3，**不使用 Jakarta** |
+| Web 容器 | Apache Tomcat | 9.0.123 |
+| Web MVC | Apache Struts | 2.5.33，基于 `javax.servlet` |
+| Servlet/JSP | `javax.servlet` / JSP | Servlet 4.0 / JSP 2.3 |
 | 视图 | JSP + JSTL 1.2 + EL | 仅展示，无 SQL、无 Java 脚本片段 |
 | 控制器 | Struts Action + Filter | `ActionSupport`、XML 路由、全局 JSP Result |
 | 业务 | Java Service | 事务、权限、状态机 |
 | 持久层 | JDBC + PreparedStatement | 无 ORM、无 MyBatis |
-| 数据库 | MySQL | 8.0+，InnoDB，utf8mb4 |
+| 数据库 | MySQL | 8.0.46，InnoDB，utf8mb4 |
 | 连接池 | HikariCP | 4.0.3 |
 | 密码 | BCrypt（jbcrypt） | cost 10 |
 | JSON | Gson | 动态表单与图表数据 |
 | 前端 | Bootstrap 5.3 + 原生 JS + Chart.js | 静态资源本地化 |
-| 构建 | Maven WAR | `maven.compiler.release=11` |
+| 构建 | JDK 11 + Maven WAR | `maven.compiler.release=11` |
+| 容器运行时 | Eclipse Temurin 11 JRE | Docker 应用镜像 |
 | 测试 | JUnit 5 + H2 | H2 2.2.224 MySQL 模式 |
 
-禁止项确认：未使用 Spring Boot、Vue、React、MyBatis、Hibernate、JPA，未混用 `javax`/`jakarta`，未使用 Tomcat 10+，也未使用面向 Jakarta 的 Struts 7。
+禁止项确认：课程交付未使用 Spring Boot、Vue、React、MyBatis、Hibernate 或 JPA，未混用两套 Servlet 命名空间，未使用 Tomcat 10+。
 
 ## 2. 功能模块
 
@@ -72,16 +73,16 @@ docker compose up -d --build
 | 数据库卷 | `tax-business-jee-mysql-data` |
 | 修改端口 | 复制 `.env.docker.example` 为 `.env`，修改 `APP_PORT` |
 
-18082 刻意与旁边的 Spring Boot 版默认端口 18080 错开，两个版本可以同时启动。停止和查看日志分别使用 `docker-stop.bat`、`docker-logs.bat`；`docker compose down` 不会删除数据库卷。
+18082 是项目的唯一默认页面端口。停止和查看日志分别使用 `docker-stop.bat`、`docker-logs.bat`；`docker compose down` 不会删除数据库卷。
 
 ### 3.2 本地前置条件
 
-- JDK 11 或更高（本项目以 Java 11 字节码为目标，实测 JDK 23 构建/运行）
-- Maven 3.6+
-- MySQL 8.0+
-- Apache Tomcat 9.0.x
+- JDK 11
+- Maven 3.8+
+- MySQL 8.0.46
+- Apache Tomcat 9.0.123
 
-> 不要把项目部署到 Tomcat 10/11：它们使用 `jakarta.*` 命名空间，与本项目的 `javax.servlet` 不兼容。
+> 不要把项目部署到 Tomcat 10/11：本项目依赖 Tomcat 9 提供的 Servlet 4.0 / JSP 2.3 API。
 
 ### 3.3 初始化数据库
 
@@ -209,15 +210,17 @@ Browser
 
 ```bash
 mvn clean test
+mvn clean package
+powershell -ExecutionPolicy Bypass -File .\scripts\verify-baseline.ps1
 ```
 
 实际结果：**30 个 Service/Util 测试全部通过，0 失败、0 错误、0 跳过**。
 
 测试使用 H2 内存库的 MySQL 兼容模式，每个测试重建 schema 与种子数据，覆盖登录、权限、纳税人、申报状态机、审核、统计、查询、审计、CSV 转义。详见 `docs/test-plan.md`。
 
-Docker 冒烟验证已经覆盖：MySQL 8 自动建表/种子数据、Tomcat 9.0.123 部署、五个角色登录、23 个主要业务页面、CSV 导出，以及运行依赖中没有 Jakarta Servlet/JSP API JAR。
+Docker 冒烟验证已经覆盖：MySQL 8.0.46 自动建表/种子数据、Eclipse Temurin 11 运行、Tomcat 9.0.123 部署、`/hello` 返回 HTTP 200、五个角色登录、23 个主要业务页面、CSV 导出，以及运行依赖中没有 Jakarta Servlet/JSP API JAR。
 
-Jakarta 边界说明：本项目源码、`web.xml`、Tomcat、Servlet/JSP API 均使用 `javax.*`。Struts 6.12 间接依赖的 FreeMarker 包内带有未启用的 `ext.jakarta` 兼容类，但本项目不引用该类，也没有 `jakarta.servlet` API 或 Jakarta 容器；不要升级到 Struts 7 或 Tomcat 10+。
+Servlet API 边界说明：本项目源码、`web.xml`、Tomcat 和 Servlet/JSP API 均使用 `javax.*`；依赖树保持 Java EE 8 兼容，不升级到 Tomcat 10+。
 
 ## 7. 安全设计要点
 
@@ -245,10 +248,12 @@ Jakarta 边界说明：本项目源码、`web.xml`、Tomcat、Servlet/JSP API �
 - [路由与接口清单](docs/api-route-list.md)
 - [测试计划与结果](docs/test-plan.md)
 - [变更记录](docs/changelog.md)
+- [Java EE 8 技术基线与验证](docs/version-baseline.md)
 
 ## 10. 常见问题
 
-**启动报 `ClassNotFoundException: javax.servlet.*`**  
+**启动报 `ClassNotFoundException: javax.servlet.*`**
+
 部署到了 Tomcat 10/11。请使用 Tomcat 9.x。
 
 **手动输入路由后返回 404**  

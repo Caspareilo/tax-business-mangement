@@ -1,4 +1,4 @@
-# 税务业务管理系统（传统 Java EE 版）部署文档
+# 税务业务管理系统 Java EE 8 部署文档
 
 > **作者：24软工2班 吴学孟 24110741085**
 
@@ -10,7 +10,7 @@
 税务业务管理-传统javaee版
 ```
 
-**传统版用于完成教学课程要求，采用 Struts 6、JSP、Servlet、JDBC 和 MySQL，不使用 Spring Boot 和 Vue。项目严格使用 `javax.servlet` 命名空间，必须部署到 Tomcat 9，不能部署到 Tomcat 10/11。**
+**本项目用于完成教学课程要求，采用 Java EE 8、Struts 2.5.33、JSP、Servlet、JDBC 和 MySQL 8，不使用 Spring Boot 和 Vue。项目严格使用 `javax.servlet` 命名空间，必须部署到 Tomcat 9，不能部署到 Tomcat 10/11。**
 
 本文档提供两种部署方式：
 
@@ -28,17 +28,17 @@
 | 层次 | 技术 | 项目版本或约束 |
 | --- | --- | --- |
 | Java 编译目标 | Java | 11 |
-| 本地推荐 JDK | OpenJDK / Oracle JDK | 11 或 17 |
-| Docker 构建 JDK | Eclipse Temurin | 17 |
-| Docker 运行 JDK | Eclipse Temurin | 17 |
+| 本地 JDK | OpenJDK / Oracle JDK | 11 |
+| Docker 构建 JDK | Eclipse Temurin | 11 |
+| Docker 运行 JDK | Eclipse Temurin | 11 |
 | Web 容器 | Apache Tomcat | 9.0.123 |
-| Web 控制器 | Apache Struts | 6.12.0 |
+| Web 控制器 | Apache Struts | 2.5.33 |
 | Servlet API | `javax.servlet-api` | 4.0.1 |
 | JSP API | `javax.servlet.jsp-api` | 2.3.3 |
 | JSTL | JSTL | 1.2 |
 | 视图 | JSP 2.3 + JSTL + EL | 服务端渲染 |
 | 数据访问 | JDBC + PreparedStatement + 手写 DAO | 不使用 ORM/MyBatis |
-| 数据库 | MySQL | 8.0（Docker 镜像 `mysql:8.0`） |
+| 数据库 | MySQL | 8.0.46（Docker 镜像 `mysql:8.0.46`） |
 | JDBC 驱动 | MySQL Connector/J | 8.0.33 |
 | 连接池 | HikariCP | 4.0.3 |
 | 密码摘要 | jBCrypt | 0.4 |
@@ -62,13 +62,13 @@
 | Docker Compose | v5.6.1 |
 | MySQL | 8.0.46 |
 | Tomcat | 9.0.123 |
-| JDK（容器运行时） | Eclipse Temurin 17 |
+| JDK（容器运行时） | Eclipse Temurin 11 |
 
 ### 3. 技术边界
 
 - 传统版没有使用 Spring Boot、Vue、React、MyBatis、Hibernate 或 JPA。
-- 所有 Java Web API 使用 `javax.servlet`，不使用 `jakarta.servlet`。
-- 不使用 Struts 7；Struts 7 已面向 Jakarta。
+- 所有 Java Web API 使用 `javax.servlet`，不使用 Jakarta EE 9+ 命名空间。
+- 控制层使用兼容 Servlet 4.0 的 Struts 2.5.33。
 - `web.xml` 部署描述符版本为 Java EE 8 / Servlet 4.0。
 - 业务地址统一使用 `.action` 后缀，由 `struts.xml` 映射。
 
@@ -181,7 +181,7 @@ docker compose down
 | 登录页 | <http://localhost:18082/auth/login.action> |
 | MySQL | 仅 Docker 内部网络访问，不开放宿主机端口 |
 
-默认端口选择 `18082`，是为了与旁边的 Spring Boot 版 `18080` 错开。
+默认端口为 `18082`；如本机端口被占用，可在 `.env` 中修改 `APP_PORT`。
 
 ### 5. Docker 容器与数据卷
 
@@ -292,10 +292,10 @@ docker compose up -d --build
 
 需要：
 
-- JDK 11 或 17。
-- Maven 3.9.x。
+- JDK 11。
+- Maven 3.8+（本项目 Docker 构建使用 3.9.9）。
 - MySQL 8.0。
-- Apache Tomcat 9.0.x。
+- Apache Tomcat 9.0.123。
 
 检查命令：
 
@@ -305,7 +305,7 @@ mvn -version
 mysql --version
 ```
 
-Tomcat 必须是 9.0.x。Tomcat 10/11 使用 `jakarta.*`，与传统版的 `javax.servlet` 不兼容。
+Tomcat 必须是 9.0.x。Tomcat 10/11 的 Servlet 命名空间与本项目依赖的 `javax.servlet` 不兼容。
 
 ### 2. 初始化 MySQL 数据库
 
@@ -410,7 +410,7 @@ mvn clean test
 预期：
 
 ```text
-Tests run: 28, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 30, Failures: 0, Errors: 0, Skipped: 0
 BUILD SUCCESS
 ```
 
@@ -634,7 +634,7 @@ http://localhost:18082/auth/login.action
 
 ### 7. 启动报 `ClassNotFoundException: javax.servlet.*`
 
-部署到了 Tomcat 10/11。请换用 Tomcat 9.0.x。
+部署到了 Tomcat 10/11。请换用 Tomcat 9.0.123。
 
 ### 8. 数据库连接失败
 
