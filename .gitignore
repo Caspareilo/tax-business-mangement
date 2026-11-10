@@ -1,5 +1,5 @@
 # Local-only material in the parent workspace.
-# Only the two project folders and 项目说明.md are published.
+# The course repository publishes only the traditional Java EE 8 project and 项目说明.md.
 /_backups/
 /code/
 /pw-tools/
@@ -7,9 +7,18 @@
 /tomcat-downloads/
 /tomcat-verify/
 /开发文档/
+/.work/
+/.pptx-build/
+/PPT成品/
+/作业收集/
+/实验报告/
+/税务业务管理-Spring Boot 3.5 +vue3版本/
+/.env
+/实验作业格式.pdf
 /*.docx
 /*.rar
 /apache-tomcat-9.0.123/
+/JAVA EE实验报告要求.docx
 
 # Common local system files
 Thumbs.db
