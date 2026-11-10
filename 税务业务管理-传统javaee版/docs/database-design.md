@@ -6,7 +6,7 @@
 - 脚本：`database/schema.sql`（结构）、`database/seed-demo.sql`（演示数据）
 - 测试库：JUnit 使用 H2 2.2.224 的 MySQL 兼容模式执行同构脚本 `src/test/resources/schema-h2.sql`、`seed-h2.sql`
 
-> 说明：本机 MySQL 9.0.1 服务存在，但当前环境没有可用账号密码，未在本机执行 MySQL 建库脚本。MySQL 语法按 MySQL 8.0 编写；业务逻辑与 SQL 已通过 H2 MySQL 模式下的 27 个自动化测试验证。部署前需由拥有权限的账号执行 `schema.sql` 与 `seed-demo.sql`。
+> 说明：数据库语法固定为 MySQL 8.0。Docker Compose 使用 MySQL 8.0.46，并自动执行 `schema.sql` 与 `seed-demo.sql`；Service 与 DAO 另由 30 个自动化测试使用 H2 MySQL 兼容模式回归验证。
 
 ## 1. 设计目标
 
@@ -293,7 +293,7 @@ flowchart LR
 | 项目 | 状态 | 说明 |
 | --- | --- | --- |
 | MySQL 8 DDL 语法 | 待本机验证 | 无本机 MySQL 凭据，未执行 |
-| H2 MySQL 模式建表 | 已通过 | 27 个测试每次重建库 |
+| H2 MySQL 模式建表 | 已通过 | 30 个测试每次重建库 |
 | 外键/唯一约束 | 已通过 | 重复编号、重复提交、并发审核测试覆盖 |
 | 事务回滚 | 已通过 | 审核失败不产生半成品记录 |
 | 索引效果 | 未压测 | 仅按查询条件设计，未做大数量执行计划对比 |

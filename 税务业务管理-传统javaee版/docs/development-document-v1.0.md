@@ -24,7 +24,7 @@
 | 功能 | 工作台、用户/角色/权限、纳税人、申报类型、表单模板与版本、申报流转、审核、统计、综合查询、CSV 导出、审计、字典、个人中心 |
 | 数据 | 13 张表、索引、外键、演示数据 |
 | 代码 | 16 个 Servlet 类（含 `BaseServlet`）、11 个 Service、11 个 DAO、2 个 Filter、JSP 视图与本地静态资源 |
-| 测试 | 9 个 JUnit 测试类、28 个用例；Tomcat 9 部署验证；11 张界面截图 |
+| 测试 | 11 个 JUnit 测试类、30 个用例；Tomcat 9 部署验证；13 张界面截图 |
 | 文档 | 开发文档、UI 调研、数据库设计、路由清单、测试计划、变更记录、README |
 
 不在范围内：真实税务接口、缴税/支付、电子签章、CA、发票、真实企业数据、微服务、Spring Boot、Vue/React、工作流引擎。
@@ -38,7 +38,7 @@
 | 未授权 URL/POST 被服务端拒绝 | 已通过 403/401 验证 |
 | 业务规则在 Service/数据库校验，不只靠 JS | 已实现 |
 | 页面无死链、核心按钮有效、统计来自数据库 | 已验证主要页面与按钮 |
-| 核心功能有可重复测试、使用虚构数据 | 28 个自动化用例 + 手工用例 |
+| 核心功能有可重复测试、使用虚构数据 | 30 个自动化用例 + 手工用例 |
 
 ## 2. 技术基线与兼容策略
 
@@ -46,12 +46,12 @@
 
 | 组件 | 版本 | 说明 |
 | --- | --- | --- |
-| Java | 编译目标 11 | JDK 23 构建，`maven.compiler.release=11` |
+| Java | 11 | Eclipse Temurin 11 构建和运行，`maven.compiler.release=11` |
 | Servlet API | 4.0.1 | `javax.servlet:javax.servlet-api`，`provided` |
 | JSP API | 2.3.3 | `javax.servlet.jsp:javax.servlet.jsp-api`，`provided` |
 | JSTL | 1.2 | 运行期打包 |
 | Tomcat | 9.0.123 | 验证实例；生产需 9.0.x |
-| MySQL | 8.0+ | 生产脚本；本机 MySQL 9.0.1 未提供凭据 |
+| MySQL | 8.0 | 由 Docker Compose 自动初始化和持久化 |
 | HikariCP | 4.0.3 | 连接池 |
 | MySQL Connector/J | 8.0.33 | JDBC 驱动 |
 | jBCrypt | 0.4 | 密码哈希 |
@@ -63,7 +63,7 @@
 
 ### 2.2 兼容性硬约束
 
-- 只使用 `javax.servlet.*`，不引入任何 `jakarta.*` 依赖。
+- 只使用 `javax.servlet.*`，依赖树保持 Java EE 8 兼容。
 - 不使用 Tomcat 10/11 部署本项目。
 - 不混用 Spring/MyBatis/Hibernate/JPA。
 - Maven 打包为 WAR，`failOnMissingWebXml=false`，使用注解式 Servlet/Filter。
@@ -460,7 +460,7 @@ stateDiagram-v2
 ### 9.2 构建
 
 ```bash
-mvn clean test     # 28 个测试
+mvn clean test     # 30 个测试
 mvn clean package  # target/tax-business-system.war
 ```
 
@@ -484,7 +484,7 @@ mvn clean package  # target/tax-business-system.war
 
 ### 10.1 自动化
 
-- 9 个测试类、28 个用例，全部通过。
+- 11 个测试类、30 个用例，全部通过。
 - 每个测试使用独立 H2 内存库，重建 schema + seed，避免状态泄漏。
 - 覆盖：登录、停用、权限、CSRF 相关服务、纳税人、申报状态机、审核并发/自审、统计口径与数据范围、查询、审计、CSV 转义。
 
@@ -525,5 +525,5 @@ mvn clean package  # target/tax-business-system.war
 | `src/main/java/.../service/StatisticsService.java` | 统计口径与数据范围 |
 | `src/main/java/.../dao/DeclarationDao.java` | 申报 SQL 与聚合 |
 | `src/main/webapp/WEB-INF/views/` | 全部 JSP |
-| `src/test/java/...` | 28 个测试 |
+| `src/test/java/...` | 30 个测试 |
 | `docs/` | 交付文档 |
