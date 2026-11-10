@@ -10,7 +10,7 @@
     <packaging>war</packaging>
 
     <name>Tax Business Management System</name>
-    <description>Traditional Java EE course project: Struts 2 + JSP + JDBC + MySQL on Tomcat 9</description>
+    <description>Java EE 8 course project: Struts 2.5 + JSP + JDBC + MySQL 8 on Tomcat 9</description>
 
     <properties>
         <maven.compiler.release>11</maven.compiler.release>
@@ -18,9 +18,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <servlet.api.version>4.0.1</servlet.api.version>
         <jsp.api.version>2.3.3</jsp.api.version>
-        <!-- Struts 6.12 is the final 6.x line and still targets javax.servlet.
-             Do not upgrade to Struts 7 in this teaching project: it targets Jakarta. -->
-        <struts.version>6.12.0</struts.version>
+        <!-- The 2.5 maintenance line targets Java EE 8 / Servlet 4.0. -->
+        <struts.version>2.5.33</struts.version>
         <log4j.version>2.26.1</log4j.version>
         <junit.version>5.10.2</junit.version>
     </properties>
@@ -47,17 +46,6 @@
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-core</artifactId>
             <version>${struts.version}</version>
-            <exclusions>
-                <!-- Keep the project on the javax Servlet API supplied by Tomcat 9. -->
-                <exclusion>
-                    <groupId>jakarta.servlet</groupId>
-                    <artifactId>jakarta.servlet-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>jakarta.servlet.jsp</groupId>
-                    <artifactId>jakarta.servlet.jsp-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>

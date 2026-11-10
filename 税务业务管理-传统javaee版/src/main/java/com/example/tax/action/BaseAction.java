@@ -20,7 +20,7 @@ import java.io.IOException;
 /**
  * Shared Struts 2 action base for the traditional Servlet/JSP stack.
  *
- * <p>The project deliberately targets Struts 6.x and Tomcat 9 because both use the
+ * <p>The project deliberately targets Struts 2.5 and Tomcat 9 because both use the
  * {@code javax.servlet} namespace. The action lifecycle, interceptors, routing and
  * result rendering are managed by Struts; this class only centralises common request
  * helpers used by the teaching examples.</p>
