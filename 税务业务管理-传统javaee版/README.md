@@ -249,6 +249,7 @@ Servlet API 边界说明：本项目源码、`web.xml`、Tomcat 和 Servlet/JSP 
 - [测试计划与结果](docs/test-plan.md)
 - [变更记录](docs/changelog.md)
 - [Java EE 8 技术基线与验证](docs/version-baseline.md)
+- [课程实验报告](../实验报告/JavaEE课程实验报告_吴学孟_24110741085.pdf)
 
 ## 10. 常见问题
 

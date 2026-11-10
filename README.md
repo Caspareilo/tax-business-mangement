@@ -59,6 +59,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\verify-baseline.ps1
 - [项目 README](税务业务管理-传统javaee版/README.md)
 - [部署文档](税务业务管理-传统javaee版/DEPLOY.md)
 - [技术基线与验证](税务业务管理-传统javaee版/docs/version-baseline.md)
+- [Java EE 课程实验报告](实验报告/JavaEE课程实验报告_吴学孟_24110741085.pdf)
 
 ## 配对部署验证
 
