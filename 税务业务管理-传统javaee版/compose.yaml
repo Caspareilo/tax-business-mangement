@@ -2,7 +2,7 @@ name: tax-business-jee
 
 services:
   mysql:
-    image: mysql:8.0
+    image: mysql:8.0.46
     container_name: tax-jee-mysql
     restart: unless-stopped
     environment:
