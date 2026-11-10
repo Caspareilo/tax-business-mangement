@@ -41,7 +41,9 @@ public class AuthFilter implements Filter {
         HttpSession session = req.getSession(true);
         req.setAttribute("csrfToken", CsrfUtil.getToken(session));
 
-        boolean publicAuthPage = "/auth/login".equals(path) || "/auth/register".equals(path);
+        boolean publicAuthPage = "/auth/login".equals(path)
+                || "/auth/register".equals(path)
+                || "/hello".equals(path);
         SessionUser user = (SessionUser) session.getAttribute("currentUser");
         req.setAttribute("currentUser", user);
 
